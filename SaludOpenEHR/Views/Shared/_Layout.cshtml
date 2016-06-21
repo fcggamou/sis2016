@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head> 
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>@ViewBag.Title - Proyecto OpenEHR</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap Core CSS -->
+    <link href="../../Scripts/BootstrapSBAdmin2/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- MetisMenu CSS -->
+    <link href="../../Scripts/BootstrapSBAdmin2/bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link href="../../Scripts/BootstrapSBAdmin2/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../Scripts/BootstrapSBAdmin2/dist/css/sb-admin-2.css" rel="stylesheet">
+    <!-- Custom Fonts -->
+    <link href="../../Scripts/BootstrapSBAdmin2/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <!-- Morris Charts CSS -->
+    <link href="../../Scripts/BootstrapSBAdmin2/bower_components/morrisjs/morris.css" rel="stylesheet">
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>               
+            </div>
+            <div class="navbar-collapse collapse">               
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        @RenderSection("SPAViews", required: false)   
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("Scripts", required: false)
+    <!-- Custom Theme JavaScript -->
+    <script src="../../Scripts/BootstrapSBAdmin2/dist/js/sb-admin-2.js"></script>
+    <!-- jQuery -->
+    <script src="../../Scripts/BootstrapSBAdmin2/bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../../Scripts/BootstrapSBAdmin2/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="../../Scripts/BootstrapSBAdmin2/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+    <!-- Flot Charts JavaScript -->
+    <script src="../../Scripts/BootstrapSBAdmin2/bower_components/flot/excanvas.min.js"></script>
+    <script src="../../Scripts/BootstrapSBAdmin2/bower_components/flot/jquery.flot.js"></script>
+    <script src="../../Scripts/BootstrapSBAdmin2/bower_components/flot/jquery.flot.pie.js"></script>
+    <script src="../../Scripts/BootstrapSBAdmin2/bower_components/flot/jquery.flot.resize.js"></script>
+    <script src="../../Scripts/BootstrapSBAdmin2/bower_components/flot/jquery.flot.time.js"></script>
+    <script src="../../Scripts/BootstrapSBAdmin2/bower_components/flot.tooltip/js/jquery.flot.tooltip.min.js"></script>
+    <!-- Morris Charts JavaScript -->
+    <script src="../../Scripts/BootstrapSBAdmin2/bower_components/raphael/raphael-min.js"></script>
+    <script src="../../Scripts/BootstrapSBAdmin2/bower_components/morrisjs/morris.min.js"></script>
+</body>
+</html>
+

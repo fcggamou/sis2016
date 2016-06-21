@@ -1,0 +1,85 @@
+﻿@model SaludOpenEHR.Models.PatientListModel
+@using System.Globalization
+@{
+    ViewBag.Title = "PatientList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    <div class="row">
+        <br />
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Patient list
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <div class="dataTable_wrapper">
+                        <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                            <thead>
+                                <tr>
+                                    <th>Patient Uid</th>
+                                    <th>First name</th>
+                                    <th>Last name</th>
+                                    <th>Date of birth</th>
+                                    <th>Sex</th>
+                                    <th>Id code</th>
+                                    <th>Id type</th>
+                                    <th>Organization Id</th>
+                                    <th/>
+                                    <th/>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var p in Model.patientList.patients)
+                                {
+                                    
+                                    <tr class="odd gradeX">
+                                        <td>@p.uid</td>
+                                        <td>@p.firstName</td>
+                                        <td>@p.lastName</td>
+                                        <td>@DateTime.ParseExact(p.dob.ToString(),"yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None).ToString("dd/MM/yyyy")</td>
+                                        <td>@p.sex</td>
+                                        <td>@p.idCode</td>
+                                        <td>@p.idType</td>
+                                        <td>@p.organizationUid</td>
+                                        <td>
+                                            <a href="@Url.Action("Index", "VitalSigns", new { uid = p.uid, firstName = p.firstName, lastName = p.lastName, dob = p.dob, idCode = p.idCode, idType = p.idType, organizationId = p.organizationUid, sex = p.sex })">
+                                                Vital signs
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="@Url.Action("Index", "LabResults", new { uid = p.uid, firstName = p.firstName, lastName = p.lastName, dob = p.dob, idCode = p.idCode, idType = p.idType, organizationId = p.organizationUid, sex = p.sex })">
+                                                Lab results
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.table-responsive -->
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+        <!-- /.row -->
+}
+
+@section Scripts
+{
+<!-- jQuery -->
+<script src="../../Scripts/BootstrapSBAdmin2/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap Core JavaScript -->
+<script src="../../Scripts/BootstrapSBAdmin2/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- Metis Menu Plugin JavaScript -->
+<script src="../../Scripts/BootstrapSBAdmin2/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+<!-- DataTables JavaScript -->
+<script src="../../Scripts/BootstrapSBAdmin2/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
+<script src="../../Scripts/BootstrapSBAdmin2/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
+<!-- Custom Theme JavaScript -->
+<script src="../../Scripts/BootstrapSBAdmin2/dist/js/sb-admin-2.js"></script>
+}

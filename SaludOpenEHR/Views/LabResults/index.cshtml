@@ -1,0 +1,163 @@
+﻿@model SaludOpenEHR.Models.LabResultsModel
+@using System.Globalization
+@{
+    ViewBag.Title = "index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Patient information
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                            <tr class="info">
+                                <td>First Name</td>
+                                <td>@Model.patient.firstName</td>
+                            </tr>
+                            <tr>
+                                <td>Last Name</td>
+                                <td>@Model.patient.lastName</td>
+                            </tr>
+                            <tr class="info">
+                                <td>Date of birth</td>
+                                <td>@DateTime.ParseExact(Model.patient.dob.ToString(), "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None).ToString("dd/MM/yyyy")</td>
+                            </tr>
+                            <tr>
+                                <td>Sex</td>
+                                <td>@Model.patient.sex</td>
+                            </tr>
+                            <tr class="info">
+                                <td>Id code</td>
+                                <td>@Model.patient.idCode</td>
+                            </tr>
+                            <tr>
+                                <td>Id type</td>
+                                <td>@Model.patient.idType</td>
+                            </tr>
+                            <tr class="info">
+                                <td>Patient Uid</td>
+                                <td>@Model.patient.uid</td>
+                            </tr>
+                            <tr>
+                                <td>Organization Id</td>
+                                <td>@Model.patient.organizationUid</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.table-responsive -->
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-12 -->
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Sugar in blood
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <!-- Chart -->
+                <div id="sugar-chart"></div>
+                <br/> <br />
+                <!-- Table -->
+                <div class="dataTable_wrapper">
+                    <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                        <thead>
+                            <tr>
+                                <th>Date of measure</th>
+                                <th>Magnitude</th>
+                                <th>Test status</th>
+                                <th>Status code</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ var entries = Model.labResults.Entries.Where(x => x.key.Contains("blood_glucose")).ToArray();
+                                var sugarInBlood = entries[0].Entries;
+                                var statusesCodes = entries[1].Entries;
+                                var statuses = entries[1].Entries[2].maps.Select(x => x.Entries[1].Value).ToArray();
+                                string unitSB = String.Empty;
+                                var k = 0;
+                            }
+                            @foreach (var sb in sugarInBlood[2].maps)
+                            {
+                                <tr class="odd gradeX">
+                                    <td>@sb.Entries[2].Value</td>
+                                    <td>@sb.Entries[0].Value (@sb.Entries[1].Value)</td>
+                                    <td>@statusesCodes[2].maps[k].Entries[1].Value</td>
+                                    <td>@statusesCodes[2].maps[k].Entries[0].Value</td>
+                                </tr>
+                                k++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.table-responsive -->
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- Table sugar in blood-->
+</div>
+
+
+@section Scripts
+{
+    <script>
+        //Flot Line Chart
+        $(document).ready(function () {
+            console.log("document ready");
+
+            // Temp Chart
+            Morris.Area({
+                element: 'sugar-chart',
+                data: [
+                    @{ var i = 0; }
+                    @foreach (var sb in sugarInBlood[2].maps)
+                    {
+                        unitSB = sb.Entries[1].Value;
+        @:  {
+                                                                                                                @:     D: "@sb.Entries[2].Value",
+                                                                                                                @:     T: @sb.Entries[0].Value
+                                                                                                                @:  }
+        if (i < sugarInBlood[2].maps.Count() - 1)
+                        {
+            @:,
+                                }
+                        i++;
+                    }],
+                xkey: 'D',
+                ykeys: ['T'],
+                labels: ['Sugar in blood (' + '@unitSB' + ')'],
+                hoverCallback: function (index, options, content, row) {
+                    var statuses = [] ;
+                    @foreach (string status in statuses)
+                    {
+                        @: statuses.push("Sugar in blood (" + "@unitSB" + "): " + row.T + "</br> Test status: " + "@status");
+                                                            }
+                    return statuses[index];
+                },
+                behaveLikeLine: true,
+                fillOpacity: 0.3,
+                pointSize: 1,
+                hideHover: false,
+                resize: true,
+                ymin: 0,
+                ymax: 20
+            });
+
+            //End Document Ready
+        });
+    </script>
+}

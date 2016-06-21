@@ -1,0 +1,15 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Session["Token"] != null)
+{
+    //using (Html.BeginForm("LogOff", "Account", new { area = "" }, FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    //{
+        @*@Html.AntiForgeryToken()*@
+   
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="@Url.Action("LogOff", "PatientList")"> Log off</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="@Url.Action("Index", "PatientList")"> Patient list</a></li>
+        </ul>
+    //}
+}

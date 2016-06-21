@@ -1,0 +1,358 @@
+﻿@model SaludOpenEHR.Models.VitalSignsModel
+@using System.Globalization
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<br />
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Patient information
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                            <tr class="info">
+                                <td>First Name</td>
+                                <td>@Model.patient.firstName</td>
+                            </tr>
+                            <tr>
+                                <td>Last Name</td>
+                                <td>@Model.patient.lastName</td>
+                            </tr>
+                            <tr class="info">
+                                <td>Date of birth</td>
+                                <td>@DateTime.ParseExact(Model.patient.dob.ToString(), "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None).ToString("dd/MM/yyyy")</td>
+                            </tr>
+                            <tr>
+                                <td>Sex</td>
+                                <td>@Model.patient.sex</td>
+                            </tr>
+                            <tr class="info">
+                                <td>Id code</td>
+                                <td>@Model.patient.idCode</td>
+                            </tr>
+                            <tr>
+                                <td>Id type</td>
+                                <td>@Model.patient.idType</td>
+                            </tr>
+                            <tr class="info">
+                                <td>Patient Uid</td>
+                                <td>@Model.patient.uid</td>
+                            </tr>
+                            <tr>
+                                <td>Organization Id</td>
+                                <td>@Model.patient.organizationUid</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.table-responsive -->
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-12 -->
+
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Blood pressure
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div class="flot-chart">
+                    <div class="flot-chart-content" id="flot-line-bp"></div>
+                </div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- Row -->
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Body temperature
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="temp-chart"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- Row -->
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Body weight
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="weight-chart"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Respratory rate
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="rate-chart"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-6 -->
+</div>
+<!-- Row -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Pulse
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="pulse-chart"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-6 -->
+</div>
+<!-- Row -->
+
+    @section Scripts
+{
+
+        <script>
+            //Flot Line Chart
+            $(document).ready(function () {
+                console.log("document ready");
+                plotBP();
+
+                function plotBP() {
+
+                    var diastolic = [];
+                    var sistolic = [];
+
+                    @foreach (var pressures in Model.entry.Entries.Where(x => x.key.Contains("blood_pressure")))
+                {
+                @:var sistolicUnit;
+                                                                                                                                                                                                                                                        @:var diastolicUnit;
+                                                                                                                                                                                                                                                        foreach (var entry in pressures.Entries[2].maps.OrderBy(x => x.Entries[2].Value))
+                    {
+                    @:var date = Date.parse("@entry.Entries[2].Value");
+                                                                                                                                                                                                                                                            @:var value = @entry.Entries[0].Value;
+                                                                                                                                                                                                                                                            if (pressures.Entries[1].Value == "Sistólica")
+                        {
+                        @:sistolicUnit = "@entry.Entries[1].Value";
+                                                                                                                                                                                                                                                                @:sistolic.push([date, value]);
+                                                                                                                                                                                                                                                            }
+                        else
+                        {
+                        @:diastolicUnit = "@entry.Entries[1].Value";
+                                                                                                                                                                                                                                                                @:diastolic.push([date, value]);
+                                                                                                                                                                                                                                                             }
+
+                    }
+                }
+
+                    var options = {
+                        series: {
+                            lines: {
+                                show: true
+                            },
+                            points: {
+                                show: true
+                            }
+                        },
+                        grid: {
+                            hoverable: true //IMPORTANT! this is needed for tooltip to work
+                        },
+                        yaxis: {
+                            min: 0,
+                            max: 200
+                        },
+                        xaxes: [{mode: 'time'}],
+                        tooltip: true,
+                        tooltipOpts: {
+                            content: "%s for %x was %y",
+                            xDateFormat: "%Y-%m-%d %h:%M",
+                            shifts: {
+                                x: -60,
+                                y: 25
+                            }
+                        }
+                    };
+
+                    var plotObj = $.plot($("#flot-line-bp"), [{
+                        data: diastolic,
+                        label: "Diastolic " + "(" + diastolicUnit + ")"
+                    }, {
+                        data: sistolic,
+                        label: "Sistolic " + "(" + sistolicUnit + ")"
+                    }],
+                        options);
+                }
+
+                // Temp Chart
+                Morris.Area({
+                    element: 'temp-chart',
+                    data: [
+                    @{ var entries = Model.entry.Entries.FirstOrDefault(x => x.key.Contains("body_temperature")).Entries;
+                        string unitTemp = String.Empty;
+                        var i = 0;
+                    }
+                    @foreach (var temp in entries[2].maps)
+                    {
+                       unitTemp = temp.Entries[1].Value;
+                       @:  {
+                                                                                                                                                                                                                               @:     D: "@temp.Entries[2].Value",
+                                                                                                                                                                                                                               @:     T: @temp.Entries[0].Value
+                                                                                                                                                                                                                               @:  }
+                              if (i < entries[2].maps.Count() - 1)
+                        {
+                             @:,
+                                }
+                      i++;
+                    }],
+                    xkey: 'D',
+                    ykeys: ['T'],
+                    labels: ['Temperature (' + '@unitTemp' + ')'],
+                    behaveLikeLine: true,
+                    fillOpacity: 0.3,
+                    pointSize: 1,
+                    hideHover: false,
+                    resize: true,
+                    ymin: 34,
+                    ymax: 43
+                });
+
+                // Weight Chart
+                Morris.Bar({
+                    element: 'weight-chart',
+                    data: [
+                    @{ var weightEntries = Model.entry.Entries.FirstOrDefault(x => x.key.Contains("body_weight")).Entries;
+                string unitWeight = String.Empty;
+                i = 0;
+            }
+                    @foreach (var weight in weightEntries[2].maps)
+                {
+                    unitWeight = weight.Entries[1].Value;
+            @:  {
+                                                                                                                                                                                                    @:     D: "@weight.Entries[2].Value",
+                                                                                                                                                                                                    @:     W: @weight.Entries[0].Value
+                                                                                                                                                                                                    @:  }
+                    if (i < weightEntries[2].maps.Count() - 1)
+            {
+                @:,
+                                }
+            i++;
+            }],
+                    xkey: 'D',
+                    ykeys: ['W'],
+                    labels: ['Weight (' + '@unitWeight' + ')'],
+                    behaveLikeLine: true,
+                    fillOpacity: 0.3,
+                    pointSize: 1,
+                    hideHover: false,
+                    parseTime: true,
+                    resize: true,
+                    ymin: 0,
+                    ymax: 150
+                });
+
+                // Respiratory Rate Chart
+                Morris.Line({
+                    element: 'rate-chart',
+                    data: [
+                    @{ var respEntries = Model.entry.Entries.FirstOrDefault(x => x.key.Contains("respiration")).Entries;
+                string unitResp = String.Empty;
+                i = 0;
+            }
+                    @foreach (var resp in respEntries[2].maps)
+                    {
+                        unitResp = resp.Entries[1].Value;
+            @:  {
+                                                                                                                                    @:     D: "@resp.Entries[2].Value",
+                                                                                                                                    @:     W: @resp.Entries[0].Value
+                                                                                                                                    @:  }
+                if (i < respEntries[2].maps.Count() - 1)
+            {
+                @:,
+                                }
+            i++;
+            }],
+                    xkey: 'D',
+                    ykeys: ['W'],
+                    labels: ['Respiratory rate (' + '@unitResp' + ')'],
+                    behaveLikeLine: true,
+                    fillOpacity: 0.3,
+                    pointSize: 1,
+                    hideHover: false,
+                    parseTime: true,
+                    resize: true,
+                    ymin: 5,
+                    ymax: 100
+                });
+
+                // Pulse Chart
+                Morris.Line({
+                    element: 'pulse-chart',
+                    data: [
+                    @{ var pulseEntries = Model.entry.Entries.FirstOrDefault(x => x.key.Contains("pulse")).Entries;
+                string unitPulse = String.Empty;
+                i = 0;
+            }
+                    @foreach (var pulse in pulseEntries[2].maps)
+                    {
+                        unitPulse = pulse.Entries[1].Value;
+            @:  {
+                                                                                                            @:     D: "@pulse.Entries[2].Value",
+                                                                                                            @:     W: @pulse.Entries[0].Value
+                                                                                                            @:  }
+                if (i < pulseEntries[2].maps.Count() - 1)
+            {
+                @:,
+                                }
+            i++;
+            }],
+                    xkey: 'D',
+                    ykeys: ['W'],
+                    labels: ['Pulse (' + '@unitPulse' + ')'],
+                    behaveLikeLine: true,
+                    fillOpacity: 0.3,
+                    pointSize: 1,
+                    hideHover: false,
+                    parseTime: true,
+                    resize: true,
+                    ymin: 20,
+                    ymax: 150
+                });
+
+                //End Document Ready
+            });
+        </script>
+    }
